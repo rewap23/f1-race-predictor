@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1 Podium Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ─────────────────────────────────────────────────────────── */
+    :root {
+      --c-bg:        #0d0d0d;
+      --c-surface:   #161616;
+      --c-border:    #2a2a2a;
+      --c-red:       #e8002d;
+      --c-red-dim:   #7a0016;
+      --c-text:      #f0f0f0;
+      --c-muted:     #888;
+      --c-gold:      #c9a84c;
+      --c-silver:    #9ba8b0;
+      --c-bronze:    #9c6b3c;
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body:    'Inter', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--c-bg);
+      color: var(--c-text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────────────── */
+    header {
+      border-bottom: 2px solid var(--c-red);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      height: 64px;
+    }
+
+    .logo-mark {
+      width: 36px; height: 36px;
+      background: var(--c-red);
+      clip-path: polygon(0 0, 100% 0, 80% 100%, 0% 100%);
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .logo-text span { color: var(--c-red); }
+
+    .header-sub {
+      margin-left: auto;
+      font-size: 0.75rem;
+      color: var(--c-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────────────── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    /* ── Tabs ───────────────────────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--c-border);
+      margin-bottom: 2rem;
+    }
+
+    .tab-btn {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.75rem 1.75rem;
+      background: none;
+      border: none;
+      color: var(--c-muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .tab-btn.active {
+      color: var(--c-text);
+      border-bottom-color: var(--c-red);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Form elements ──────────────────────────────────────────────────── */
+    label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    select, input[type="text"], input[type="number"] {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      color: var(--c-text);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 4px;
+      width: 100%;
+      transition: border-color 0.15s;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--c-red);
+    }
+
+    .field-group {
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── Past race panel ────────────────────────────────────────────────── */
+    .race-select-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: end;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Manual entry table ─────────────────────────────────────────────── */
+    .entry-header {
+      margin-bottom: 1rem;
+    }
+
+    .entry-header h2 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .entry-header p {
+      font-size: 0.82rem;
+      color: var(--c-muted);
+      line-height: 1.5;
+    }
+
+    .driver-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--c-border);
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+    }
+
+    table.driver-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    table.driver-table thead th {
+      background: #1c1c1c;
+      padding: 0.55rem 0.6rem;
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 1px solid var(--c-border);
+    }
+
+    table.driver-table tbody tr {
+      border-bottom: 1px solid var(--c-border);
+    }
+
+    table.driver-table tbody tr:last-child { border-bottom: none; }
+
+    table.driver-table tbody tr:hover { background: #1a1a1a; }
+
+    table.driver-table td {
+      padding: 0.35rem 0.45rem;
+      vertical-align: middle;
+    }
+
+    table.driver-table td input {
+      padding: 0.3rem 0.4rem;
+      font-size: 0.8rem;
+      width: 100%;
+      min-width: 52px;
+    }
+
+    .driver-abbr {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    /* ── Predict button ─────────────────────────────────────────────────── */
+    .predict-btn {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--c-red);
+      color: white;
+      border: none;
+      padding: 0.8rem 2.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .predict-btn:hover { background: #ff0033; }
+    .predict-btn:active { transform: scale(0.98); }
+    .predict-btn:disabled { background: var(--c-red-dim); cursor: not-allowed; }
+
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    .predict-btn.loading .spinner { display: block; }
+    .predict-btn.loading .btn-text { opacity: 0.7; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Error message ──────────────────────────────────────────────────── */
+    .error-msg {
+      background: #1f0a0a;
+      border: 1px solid var(--c-red-dim);
+      border-radius: 4px;
+      color: #ff6b6b;
+      font-size: 0.85rem;
+      padding: 0.75rem 1rem;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    /* ── Results section ────────────────────────────────────────────────── */
+    #results {
+      margin-top: 3rem;
+      display: none;
+    }
+
+    .results-label {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--c-red);
+      margin-bottom: 1rem;
+    }
+
+    /* ── Podium visual ──────────────────────────────────────────────────── */
+    .podium-wrap {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 3rem;
+      padding: 0 1rem;
+    }
+
+    .podium-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+      max-width: 200px;
+    }
+
+    .podium-card {
+      width: 100%;
+      background: var(--c-surface);
+      border-radius: 6px;
+      padding: 1rem 0.75rem;
+      text-align: center;
+      border: 1px solid var(--c-border);
+      position: relative;
+    }
+
+    .podium-slot.p1 .podium-card {
+      border-color: var(--c-gold);
+      background: #181408;
+    }
+    .podium-slot.p2 .podium-card {
+      border-color: var(--c-silver);
+      background: #121416;
+    }
+    .podium-slot.p3 .podium-card {
+      border-color: var(--c-bronze);
+      background: #140f0a;
+    }
+
+    .podium-pos {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .podium-slot.p1 .podium-pos { color: var(--c-gold); }
+    .podium-slot.p2 .podium-pos { color: var(--c-silver); }
+    .podium-slot.p3 .podium-pos { color: var(--c-bronze); }
+
+    .podium-driver {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .podium-prob {
+      font-size: 0.78rem;
+      color: var(--c-muted);
+    }
+
+    .podium-prob strong {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--c-text);
+    }
+
+    /* Stepped podium base */
+    .podium-step {
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .podium-slot.p1 .podium-step { height: 72px; background: #2a2008; border: 1px solid var(--c-gold); }
+    .podium-slot.p2 .podium-step { height: 48px; background: #181c1f; border: 1px solid var(--c-silver); }
+    .podium-slot.p3 .podium-step { height: 32px; background: #1c1208; border: 1px solid var(--c-bronze); }
+
+    .podium-step-num {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+
+    .podium-slot.p1 .podium-step-num { color: var(--c-gold); }
+    .podium-slot.p2 .podium-step-num { color: var(--c-silver); }
+    .podium-slot.p3 .podium-step-num { color: var(--c-bronze); }
+
+    /* ── Full ranking table ─────────────────────────────────────────────── */
+    .ranking-label {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .ranking-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .ranking-row {
+      display: grid;
+      grid-template-columns: 2rem 4rem 1fr 4rem;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.55rem 0.75rem;
+      background: var(--c-surface);
+      border-radius: 4px;
+      border: 1px solid var(--c-border);
+      transition: background 0.1s;
+    }
+
+    .ranking-row:hover { background: #1e1e1e; }
+
+    .ranking-row.top3 { border-color: #2a2a2a; }
+    .ranking-row.top3.p1 { border-left: 3px solid var(--c-gold); }
+    .ranking-row.top3.p2 { border-left: 3px solid var(--c-silver); }
+    .ranking-row.top3.p3 { border-left: 3px solid var(--c-bronze); }
+
+    .rank-num {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--c-muted);
+      text-align: right;
+    }
+
+    .rank-driver {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .rank-bar-wrap {
+      height: 6px;
+      background: var(--c-border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .rank-bar {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--c-red);
+      transition: width 0.6s ease;
+    }
+
+    .ranking-row.top3.p1 .rank-bar { background: var(--c-gold); }
+    .ranking-row.top3.p2 .rank-bar { background: var(--c-silver); }
+    .ranking-row.top3.p3 .rank-bar { background: var(--c-bronze); }
+
+    .rank-pct {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--c-muted);
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* ── About page ─────────────────────────────────────────────────────── */
+    .about-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .about-card-label {
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--c-red);
+      padding: 0.7rem 1.25rem;
+      border-bottom: 1px solid var(--c-border);
+      background: #1a0a0c;
+    }
+
+    .about-card-body {
+      padding: 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--c-text);
+    }
+
+    .about-card-body strong { color: var(--c-text); font-weight: 600; }
+    .about-card-body em { color: var(--c-muted); font-style: normal; }
+
+    .stat-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: 4px;
+      padding: 0.75rem 1.25rem;
+      text-align: center;
+      min-width: 80px;
+    }
+
+    .stat-val {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--c-red);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-lbl {
+      font-size: 0.68rem;
+      color: var(--c-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .feature-row {
+      display: grid;
+      grid-template-columns: 11rem 1fr 6rem 2.5rem;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .feature-name {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .feature-desc {
+      font-size: 0.78rem;
+      color: var(--c-muted);
+      line-height: 1.4;
+    }
+
+    .feature-bar-wrap {
+      height: 5px;
+      background: var(--c-border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .feature-bar {
+      height: 100%;
+      background: var(--c-red);
+      border-radius: 3px;
+    }
+
+    .feature-pct {
+      font-size: 0.75rem;
+      color: var(--c-muted);
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .driver-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .driver-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: 4px;
+      padding: 0.45rem 0.75rem;
+    }
+
+    .chip-abbr {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: var(--c-red);
+      min-width: 2.5rem;
+    }
+
+    .chip-name {
+      font-size: 0.78rem;
+      color: var(--c-muted);
+    }
+
+    .limit-list {
+      margin: 0.75rem 0 0 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .limit-list li {
+      font-size: 0.85rem;
+      color: var(--c-muted);
+      line-height: 1.4;
+    }
+
+    /* ── Divider ────────────────────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--c-border);
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark"></div>
+  <div class="logo-text">F1 <span>Podium</span> Predictor</div>
+  <div class="header-sub">Random Forest · 2018–2025 · AUC 0.951</div>
+</header>
+
+<main>
+
+  <!-- ── Tabs ─────────────────────────────────────────────────────────── -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('past')">Past Race</button>
+    <button class="tab-btn" onclick="switchTab('upcoming')">Upcoming Race</button>
+    <button class="tab-btn" onclick="switchTab('about')">About</button>
+  </div>
+
+  <!-- ── Past Race Panel ───────────────────────────────────────────────── -->
+  <div id="tab-past" class="tab-panel active">
+    <div class="entry-header">
+      <h2>Select a Race</h2>
+      <p>Pick a 2026 Grand Prix to auto-fill qualifying data and run the prediction.</p>
+    </div>
+
+    <div class="race-select-row">
+      <div class="field-group" style="margin-bottom:0">
+        <label for="race-select">Grand Prix</label>
+        <select id="race-select" onchange="fillPastRace()">
+          <option value="">— choose a race —</option>
+          <option value="monaco">Round 6 — Monaco Grand Prix</option>
+        </select>
+      </div>
+      <button class="predict-btn" onclick="runPrediction('past')" id="btn-past">
+        <div class="spinner"></div>
+        <span class="btn-text">Predict</span>
+      </button>
+    </div>
+
+    <div id="past-preview" style="display:none">
+      <p style="font-size:0.8rem;color:var(--c-muted);margin-bottom:0.5rem;">
+        Loaded <span id="past-driver-count"></span> drivers from qualifying.
+        Scroll right on small screens to see all fields.
+      </p>
+      <div class="driver-table-wrap">
+        <table class="driver-table" id="past-table"></table>
+      </div>
+    </div>
+
+    <div id="error-past" class="error-msg"></div>
+  </div>
+
+  <!-- ── Upcoming Race Panel ───────────────────────────────────────────── -->
+  <div id="tab-upcoming" class="tab-panel">
+    <div class="entry-header">
+      <h2>Enter Qualifying Results</h2>
+      <p>After Saturday qualifying, fill in each driver's grid position and feature values, then hit Predict.</p>
+    </div>
+
+    <div class="field-group">
+      <label for="race-name">Race name (optional)</label>
+      <input type="text" id="race-name" placeholder="e.g. 2026 British Grand Prix" style="max-width:320px" />
+    </div>
+
+    <div class="driver-table-wrap">
+      <table class="driver-table" id="upcoming-table">
+        <thead>
+          <tr>
+            <th>Driver</th>
+            <th>Grid</th>
+            <th title="Gap to pole in seconds">Quali Gap (s)</th>
+            <th title="Avg finish over last 5 races">Driver Form</th>
+            <th title="Team avg finish over last 5 races">Team Form</th>
+            <th title="Historical avg finish at this circuit">Track Hist.</th>
+            <th title="Points finishes in last 5 races (0-5)">Pts / 5</th>
+            <th title="1 if home race, else 0">Home</th>
+            <th title="Driver championship points this season">Drv Pts</th>
+            <th title="Constructor championship points this season">Tm Pts</th>
+          </tr>
+        </thead>
+        <tbody id="upcoming-tbody"></tbody>
+      </table>
+    </div>
+
+    <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
+      <button class="predict-btn" onclick="runPrediction('upcoming')" id="btn-upcoming">
+        <div class="spinner"></div>
+        <span class="btn-text">Predict Podium</span>
+      </button>
+      <button onclick="resetUpcoming()" style="background:none;border:1px solid var(--c-border);color:var(--c-muted);padding:0.7rem 1.2rem;border-radius:4px;cursor:pointer;font-family:var(--font-body);font-size:0.85rem;">
+        Reset
+      </button>
+    </div>
+
+    <div id="error-upcoming" class="error-msg"></div>
+  </div>
+
+  <!-- ── About Panel ──────────────────────────────────────────────────── -->
+  <div id="tab-about" class="tab-panel">
+
+    <div class="entry-header" style="margin-bottom:2rem">
+      <h2>How This Predictor Works</h2>
+      <p>A machine learning model trained on 7 seasons of Formula 1 data, predicting the probability each driver finishes on the podium.</p>
+    </div>
+
+    <!-- Model card -->
+    <div class="about-card" style="margin-bottom:2rem">
+      <div class="about-card-label">The Model</div>
+      <div class="about-card-body">
+        <p>A <strong>Random Forest classifier</strong> — an ensemble of 200 decision trees trained on race results from 2018 to 2025. Each tree learns a slightly different set of patterns; their votes are averaged into a final podium probability per driver.</p>
+        <div class="stat-row" style="margin-top:1.25rem">
+          <div class="stat-item"><div class="stat-val">0.951</div><div class="stat-lbl">AUC-ROC</div></div>
+          <div class="stat-item"><div class="stat-val">71.6%</div><div class="stat-lbl">Precision</div></div>
+          <div class="stat-item"><div class="stat-val">73.6%</div><div class="stat-lbl">Recall</div></div>
+          <div class="stat-item"><div class="stat-val">149</div><div class="stat-lbl">Races trained on</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features card -->
+    <div class="about-card" style="margin-bottom:2rem">
+      <div class="about-card-label">What the Model Uses to Predict</div>
+      <div class="about-card-body">
+        <p style="margin-bottom:1rem;color:var(--c-muted);font-size:0.85rem">Every feature below is calculated from information available <em>before</em> the race starts — no future data is used.</p>
+        <div class="feature-list">
+          <div class="feature-row">
+            <div class="feature-name">Grid Position</div>
+            <div class="feature-desc">Where the driver starts on the grid after qualifying. The single strongest predictor.</div>
+            <div class="feature-bar-wrap"><div class="feature-bar" style="width:66%"></div></div>
+            <div class="feature-pct">66%</div>
+          </div>
+          <div class="feature-row">
+            <div class="feature-name">Driver Form (last 5)</div>
+            <div class="feature-desc">Average finishing position across the driver's last 5 races.</div>
+            <div class="feature-bar-wrap"><div class="feature-bar" style="width:11%"></div></div>
+            <div class="feature-pct">7%</div>
+          </div>
+          <div class="feature-row">
+            <div class="feature-name">Qualifying Gap to Pole</div>
+            <div class="feature-desc">Time behind pole position in seconds — captures pace more honestly than grid slot alone.</div>
+            <div class="feature-bar-wrap"><div class="feature-bar" style="width:8%"></div></div>
+            <div class="feature-pct">5%</div>
+          </div>
+          <div class="feature-row">
+            <div class="feature-name">Constructor Points</div>
+            <div class="feature-desc">Team's cumulative championship points this season — a proxy for car competitiveness.</div>
+            <div class="feature-bar-wrap"><div class="feature-bar" style="width:7%"></div></div>
+            <div class="feature-pct">5%</div>
+          </div>
+          <div class="feature-row">
+            <div class="feature-name">Track History</div>
+            <div class="feature-desc">Driver's historical average finish at this specific circuit.</div>
+            <div class="feature-bar-wrap"><div class="feature-bar" style="width:7%"></div></div>
+            <div class="feature-pct">4.5%</div>
+          </div>
+          <div class="feature-row">
+            <div class="feature-name">Team Form (last 5)</div>
+            <div class="feature-desc">Average finishing position for the constructor over the last 5 races.</div>
+            <div class="feature-bar-wrap"><div class="feature-bar" style="width:6%"></div></div>
+            <div class="feature-pct">4%</div>
+          </div>
+          <div class="feature-row">
+            <div class="feature-name">Driver Championship Points</div>
+            <div class="feature-desc">Points accumulated by the driver so far this season.</div>
+            <div class="feature-bar-wrap"><div class="feature-bar" style="width:5%"></div></div>
+            <div class="feature-pct">3.6%</div>
+          </div>
+          <div class="feature-row">
+            <div class="feature-name">Points Finishes (last 5)</div>
+            <div class="feature-desc">How many of the last 5 races the driver finished in the top 10 — measures consistency.</div>
+            <div class="feature-bar-wrap"><div class="feature-bar" style="width:4%"></div></div>
+            <div class="feature-pct">2.8%</div>
+          </div>
+          <div class="feature-row">
+            <div class="feature-name">Home Race</div>
+            <div class="feature-desc">Whether the driver is racing in their home country.</div>
+            <div class="feature-bar-wrap"><div class="feature-bar" style="width:4%"></div></div>
+            <div class="feature-pct">2.5%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drivers card -->
+    <div class="about-card" style="margin-bottom:2rem">
+      <div class="about-card-label">2026 Driver Grid</div>
+      <div class="about-card-body">
+        <p style="margin-bottom:1rem;color:var(--c-muted);font-size:0.85rem">All 22 drivers on the 2026 Formula 1 grid. Use these abbreviations when entering data in the Upcoming Race tab.</p>
+        <div class="driver-grid">
+          <div class="driver-chip"><span class="chip-abbr">ALB</span><span class="chip-name">Alexander Albon</span></div>
+          <div class="driver-chip"><span class="chip-abbr">ALO</span><span class="chip-name">Fernando Alonso</span></div>
+          <div class="driver-chip"><span class="chip-abbr">ANT</span><span class="chip-name">Kimi Antonelli</span></div>
+          <div class="driver-chip"><span class="chip-abbr">BEA</span><span class="chip-name">Oliver Bearman</span></div>
+          <div class="driver-chip"><span class="chip-abbr">BOR</span><span class="chip-name">Gabriel Bortoleto</span></div>
+          <div class="driver-chip"><span class="chip-abbr">BOT</span><span class="chip-name">Valtteri Bottas</span></div>
+          <div class="driver-chip"><span class="chip-abbr">COL</span><span class="chip-name">Franco Colapinto</span></div>
+          <div class="driver-chip"><span class="chip-abbr">GAS</span><span class="chip-name">Pierre Gasly</span></div>
+          <div class="driver-chip"><span class="chip-abbr">HAD</span><span class="chip-name">Isack Hadjar</span></div>
+          <div class="driver-chip"><span class="chip-abbr">HAM</span><span class="chip-name">Lewis Hamilton</span></div>
+          <div class="driver-chip"><span class="chip-abbr">HUL</span><span class="chip-name">Nico Hülkenberg</span></div>
+          <div class="driver-chip"><span class="chip-abbr">LAW</span><span class="chip-name">Liam Lawson</span></div>
+          <div class="driver-chip"><span class="chip-abbr">LEC</span><span class="chip-name">Charles Leclerc</span></div>
+          <div class="driver-chip"><span class="chip-abbr">LIN</span><span class="chip-name">Arvid Lindblad</span></div>
+          <div class="driver-chip"><span class="chip-abbr">NOR</span><span class="chip-name">Lando Norris</span></div>
+          <div class="driver-chip"><span class="chip-abbr">OCO</span><span class="chip-name">Esteban Ocon</span></div>
+          <div class="driver-chip"><span class="chip-abbr">PER</span><span class="chip-name">Sergio Pérez</span></div>
+          <div class="driver-chip"><span class="chip-abbr">PIA</span><span class="chip-name">Oscar Piastri</span></div>
+          <div class="driver-chip"><span class="chip-abbr">RUS</span><span class="chip-name">George Russell</span></div>
+          <div class="driver-chip"><span class="chip-abbr">SAI</span><span class="chip-name">Carlos Sainz Jr.</span></div>
+          <div class="driver-chip"><span class="chip-abbr">STR</span><span class="chip-name">Lance Stroll</span></div>
+          <div class="driver-chip"><span class="chip-abbr">VER</span><span class="chip-name">Max Verstappen</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Limitations card -->
+    <div class="about-card">
+      <div class="about-card-label">What the Model Can't Predict</div>
+      <div class="about-card-body">
+        <p>The model predicts podium probability under normal race conditions. Some outcomes are structurally unpredictable from pre-race data:</p>
+        <ul class="limit-list">
+          <li>Safety car periods and red flags that shuffle race order</li>
+          <li>Mechanical failures and reliability issues mid-race</li>
+          <li>Crashes that eliminate front-running drivers</li>
+          <li>Post-race penalty decisions by stewards</li>
+          <li>Unexpected wet weather or rapidly changing conditions</li>
+        </ul>
+        <p style="margin-top:1rem;font-size:0.82rem;color:var(--c-muted)">Example: at the 2026 Monaco GP, Gasly qualified P9 but podiumed after penalties were handed to other drivers on review — a result no pre-race model could have foreseen.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Results ───────────────────────────────────────────────────────── -->
+  <div id="results">
+    <hr class="divider" />
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <div class="results-label" style="margin-bottom:0" id="results-race-label">Predicted Podium</div>
+        <button onclick="document.getElementById('results').style.display='none'"
+            style="background:none;border:1px solid var(--c-border);color:var(--c-muted);
+            padding:0.4rem 0.9rem;border-radius:4px;cursor:pointer;font-size:0.8rem;
+            font-family:var(--font-body)">
+            Clear
+        </button>
+    </div>
+
+    <!-- Podium visual -->
+    <div class="podium-wrap">
+      <!-- P2 left -->
+      <div class="podium-slot p2">
+        <div class="podium-card">
+          <div class="podium-pos">2nd</div>
+          <div class="podium-driver" id="pod-p2-driver">—</div>
+          <div class="podium-prob">Podium prob. <strong id="pod-p2-prob">—</strong></div>
+        </div>
+        <div class="podium-step"><span class="podium-step-num">2</span></div>
+      </div>
+      <!-- P1 center -->
+      <div class="podium-slot p1">
+        <div class="podium-card">
+          <div class="podium-pos">1st</div>
+          <div class="podium-driver" id="pod-p1-driver">—</div>
+          <div class="podium-prob">Podium prob. <strong id="pod-p1-prob">—</strong></div>
+        </div>
+        <div class="podium-step"><span class="podium-step-num">1</span></div>
+      </div>
+      <!-- P3 right -->
+      <div class="podium-slot p3">
+        <div class="podium-card">
+          <div class="podium-pos">3rd</div>
+          <div class="podium-driver" id="pod-p3-driver">—</div>
+          <div class="podium-prob">Podium prob. <strong id="pod-p3-prob">—</strong></div>
+        </div>
+        <div class="podium-step"><span class="podium-step-num">3</span></div>
+      </div>
+    </div>
+
+    <!-- Full ranking -->
+    <div class="ranking-label">Full Grid — Ranked by Podium Probability</div>
+    <div class="ranking-list" id="ranking-list"></div>
+  </div>
+
+</main>
+
+<script>
+  const API = 'http://127.0.0.1:8000';
+
+  // ── Pre-loaded race data ─────────────────────────────────────────────────
+  const PAST_RACES = {
+    monaco: {
+      label: 'Round 6 — Monaco Grand Prix',
+      drivers: [
+        { Driver:'ANT', GridPosition:1,  QualiGapToPole:0.000, DriverFormLast5:1.2,  TeamFormLast5:2.1,  TrackHistory:10.0, PointsFinishesLast5:5, HomeRace:0, CumulativeDriverPoints:131, CumulativeTeamPoints:219 },
+        { Driver:'VER', GridPosition:2,  QualiGapToPole:0.043, DriverFormLast5:5.4,  TeamFormLast5:6.8,  TrackHistory:2.8,  PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:35,  CumulativeTeamPoints:50  },
+        { Driver:'HAM', GridPosition:3,  QualiGapToPole:0.214, DriverFormLast5:3.4,  TeamFormLast5:3.8,  TrackHistory:2.5,  PointsFinishesLast5:5, HomeRace:0, CumulativeDriverPoints:72,  CumulativeTeamPoints:132 },
+        { Driver:'LEC', GridPosition:4,  QualiGapToPole:0.310, DriverFormLast5:4.2,  TeamFormLast5:3.8,  TrackHistory:3.8,  PointsFinishesLast5:4, HomeRace:1, CumulativeDriverPoints:60,  CumulativeTeamPoints:132 },
+        { Driver:'HAD', GridPosition:5,  QualiGapToPole:0.390, DriverFormLast5:7.8,  TeamFormLast5:6.8,  TrackHistory:10.0, PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:15,  CumulativeTeamPoints:50  },
+        { Driver:'RUS', GridPosition:6,  QualiGapToPole:0.452, DriverFormLast5:3.8,  TeamFormLast5:2.1,  TrackHistory:5.2,  PointsFinishesLast5:5, HomeRace:0, CumulativeDriverPoints:88,  CumulativeTeamPoints:219 },
+        { Driver:'PIA', GridPosition:7,  QualiGapToPole:0.530, DriverFormLast5:5.0,  TeamFormLast5:5.2,  TrackHistory:7.5,  PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:33,  CumulativeTeamPoints:73  },
+        { Driver:'NOR', GridPosition:8,  QualiGapToPole:0.610, DriverFormLast5:5.8,  TeamFormLast5:5.2,  TrackHistory:4.8,  PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:40,  CumulativeTeamPoints:73  },
+        { Driver:'GAS', GridPosition:9,  QualiGapToPole:0.695, DriverFormLast5:9.2,  TeamFormLast5:10.4, TrackHistory:7.8,  PointsFinishesLast5:2, HomeRace:0, CumulativeDriverPoints:11,  CumulativeTeamPoints:16  },
+        { Driver:'LAW', GridPosition:10, QualiGapToPole:0.780, DriverFormLast5:8.8,  TeamFormLast5:9.6,  TrackHistory:10.0, PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:20,  CumulativeTeamPoints:28  },
+        { Driver:'COL', GridPosition:11, QualiGapToPole:0.870, DriverFormLast5:11.4, TeamFormLast5:11.8, TrackHistory:10.0, PointsFinishesLast5:2, HomeRace:0, CumulativeDriverPoints:8,   CumulativeTeamPoints:15  },
+        { Driver:'SAI', GridPosition:12, QualiGapToPole:0.940, DriverFormLast5:10.8, TeamFormLast5:11.8, TrackHistory:5.5,  PointsFinishesLast5:2, HomeRace:0, CumulativeDriverPoints:7,   CumulativeTeamPoints:15  },
+        { Driver:'HUL', GridPosition:13, QualiGapToPole:1.010, DriverFormLast5:12.0, TeamFormLast5:13.0, TrackHistory:9.2,  PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:4,   CumulativeTeamPoints:7   },
+        { Driver:'LIN', GridPosition:14, QualiGapToPole:1.080, DriverFormLast5:12.5, TeamFormLast5:9.6,  TrackHistory:10.0, PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:8,   CumulativeTeamPoints:28  },
+        { Driver:'DOO', GridPosition:15, QualiGapToPole:1.150, DriverFormLast5:13.2, TeamFormLast5:10.4, TrackHistory:10.0, PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:5,   CumulativeTeamPoints:16  },
+        { Driver:'BOR', GridPosition:16, QualiGapToPole:1.220, DriverFormLast5:14.0, TeamFormLast5:13.0, TrackHistory:10.0, PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:3,   CumulativeTeamPoints:7   },
+        { Driver:'OCO', GridPosition:17, QualiGapToPole:1.350, DriverFormLast5:14.5, TeamFormLast5:14.8, TrackHistory:8.8,  PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:3,   CumulativeTeamPoints:5   },
+        { Driver:'PER', GridPosition:18, QualiGapToPole:1.420, DriverFormLast5:15.0, TeamFormLast5:15.5, TrackHistory:7.2,  PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:2,   CumulativeTeamPoints:2   },
+        { Driver:'BEA', GridPosition:19, QualiGapToPole:1.490, DriverFormLast5:15.5, TeamFormLast5:14.8, TrackHistory:10.0, PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:2,   CumulativeTeamPoints:5   },
+        { Driver:'BOT', GridPosition:20, QualiGapToPole:1.560, DriverFormLast5:16.0, TeamFormLast5:15.5, TrackHistory:9.5,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:2   },
+        { Driver:'ALO', GridPosition:21, QualiGapToPole:1.640, DriverFormLast5:16.5, TeamFormLast5:17.0, TrackHistory:6.8,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:0   },
+        { Driver:'STR', GridPosition:22, QualiGapToPole:1.720, DriverFormLast5:17.2, TeamFormLast5:17.0, TrackHistory:11.5, PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:0   },
+      ]
+    }
+  };
+
+  // 2026 F1 driver grid — pre-filled so users only edit numeric values
+  const UPCOMING_DRIVERS = [
+    'ANT','VER','HAM','LEC','HAD',
+    'RUS','PIA','NOR','GAS','LAW',
+    'COL','SAI','HUL','LIN','ALB',
+    'BOR','OCO','PER','BEA','BOT',
+    'ALO','STR'
+  ];
+
+  const FIELDS = [
+    { key:'GridPosition',           type:'number', step:1,    placeholder:'1'   },
+    { key:'QualiGapToPole',         type:'number', step:0.001,placeholder:'0.000'},
+    { key:'DriverFormLast5',        type:'number', step:0.1,  placeholder:'10.0' },
+    { key:'TeamFormLast5',          type:'number', step:0.1,  placeholder:'10.0' },
+    { key:'TrackHistory',           type:'number', step:0.1,  placeholder:'10.0' },
+    { key:'PointsFinishesLast5',    type:'number', step:1,    placeholder:'3'   },
+    { key:'HomeRace',               type:'number', step:1,    placeholder:'0'   },
+    { key:'CumulativeDriverPoints', type:'number', step:1,    placeholder:'0'   },
+    { key:'CumulativeTeamPoints',   type:'number', step:1,    placeholder:'0'   },
+  ];
+
+  // ── Tab switching ────────────────────────────────────────────────────────
+  const TAB_NAMES = ['past', 'upcoming', 'about'];
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => {
+         b.classList.toggle('active', TAB_NAMES[i] === tab);
+    });
+    TAB_NAMES.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        if (el) el.classList.toggle('active', t === tab);
+    });
+    // Hide results when navigating away
+    document.getElementById('results').style.display = 'none';
+    }
+
+  // ── Build past race table ────────────────────────────────────────────────
+  function fillPastRace() {
+    const key = document.getElementById('race-select').value;
+    const preview = document.getElementById('past-preview');
+    if (!key) { preview.style.display = 'none'; return; }
+
+    const race = PAST_RACES[key];
+    preview.style.display = 'block';
+    document.getElementById('past-driver-count').textContent = race.drivers.length;
+
+    const table = document.getElementById('past-table');
+    table.innerHTML = `
+      <thead><tr>
+        <th>Driver</th>
+        <th>Grid</th><th>Quali Gap</th><th>Drv Form</th>
+        <th>Tm Form</th><th>Track</th><th>Pts/5</th>
+        <th>Home</th><th>Drv Pts</th><th>Tm Pts</th>
+      </tr></thead>
+      <tbody>
+        ${race.drivers.map(d => `
+          <tr>
+            <td><span class="driver-abbr">${d.Driver}</span></td>
+            <td><input type="number" value="${d.GridPosition}"           data-driver="${d.Driver}" data-field="GridPosition"           /></td>
+            <td><input type="number" value="${d.QualiGapToPole}"         data-driver="${d.Driver}" data-field="QualiGapToPole"         step="0.001"/></td>
+            <td><input type="number" value="${d.DriverFormLast5}"        data-driver="${d.Driver}" data-field="DriverFormLast5"        step="0.1"/></td>
+            <td><input type="number" value="${d.TeamFormLast5}"          data-driver="${d.Driver}" data-field="TeamFormLast5"          step="0.1"/></td>
+            <td><input type="number" value="${d.TrackHistory}"           data-driver="${d.Driver}" data-field="TrackHistory"           step="0.1"/></td>
+            <td><input type="number" value="${d.PointsFinishesLast5}"   data-driver="${d.Driver}" data-field="PointsFinishesLast5"   step="1"/></td>
+            <td><input type="number" value="${d.HomeRace}"               data-driver="${d.Driver}" data-field="HomeRace"               step="1"/></td>
+            <td><input type="number" value="${d.CumulativeDriverPoints}" data-driver="${d.Driver}" data-field="CumulativeDriverPoints" step="1"/></td>
+            <td><input type="number" value="${d.CumulativeTeamPoints}"   data-driver="${d.Driver}" data-field="CumulativeTeamPoints"   step="1"/></td>
+          </tr>`).join('')}
+      </tbody>`;
+  }
+
+  // ── Build upcoming race table ────────────────────────────────────────────
+  function buildUpcomingTable() {
+    const tbody = document.getElementById('upcoming-tbody');
+    tbody.innerHTML = UPCOMING_DRIVERS.map((drv, i) => `
+      <tr>
+        <td><span class="driver-abbr" id="upcoming-drv-${i}" data-abbr="${drv}">${drv}</span></td>
+        ${FIELDS.map(f => `
+          <td><input type="number"
+            id="upcoming-${i}-${f.key}"
+            step="${f.step}"
+            placeholder="${f.placeholder}"
+            value="${f.key==='GridPosition' ? i+1 : f.key==='PointsFinishesLast5' ? 3 : f.key==='HomeRace' ? 0 : f.key.includes('Points') ? 20 : 10}"
+          /></td>`).join('')}
+      </tr>`).join('');
+  }
+
+  function resetUpcoming() {
+    buildUpcomingTable();
+    document.getElementById('race-name').value = '';
+    document.getElementById('results').style.display = 'none';
+  }
+
+  // ── Read data from tables ────────────────────────────────────────────────
+  function readPastDrivers() {
+    const key = document.getElementById('race-select').value;
+    if (!key) return null;
+    const race = PAST_RACES[key];
+    return race.drivers.map(d => {
+      const updated = { ...d };
+      FIELDS.forEach(f => {
+        const el = document.querySelector(`input[data-driver="${d.Driver}"][data-field="${f.key}"]`);
+        if (el) updated[f.key] = parseFloat(el.value) || 0;
+      });
+      return updated;
+    });
+  }
+
+  function readUpcomingDrivers() {
+    return UPCOMING_DRIVERS.map((_, i) => {
+      const driver = document.getElementById(`upcoming-drv-${i}`).dataset.abbr || UPCOMING_DRIVERS[i];
+      const obj = { Driver: driver };
+      FIELDS.forEach(f => {
+        const el = document.getElementById(`upcoming-${i}-${f.key}`);
+        obj[f.key] = el ? (parseFloat(el.value) || 0) : 0;
+      });
+      return obj;
+    });
+  }
+
+  // ── Run prediction ───────────────────────────────────────────────────────
+  async function runPrediction(tab) {
+    const btn      = document.getElementById(`btn-${tab}`);
+    const errorEl  = document.getElementById(`error-${tab}`);
+
+    errorEl.style.display = 'none';
+    btn.disabled = true;
+    btn.classList.add('loading');
+
+    const drivers = tab === 'past' ? readPastDrivers() : readUpcomingDrivers();
+    if (!drivers) {
+      showError(errorEl, 'Please select a race first.');
+      btn.disabled = false; btn.classList.remove('loading');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API}/predict`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ drivers })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(JSON.stringify(err.detail || err));
+      }
+
+      const data = await res.json();
+      const raceName = tab === 'past'
+        ? PAST_RACES[document.getElementById('race-select').value].label
+        : (document.getElementById('race-name').value || 'Upcoming Race');
+
+      renderResults(data.predictions, raceName);
+
+    } catch (e) {
+      showError(errorEl, `Could not reach the prediction server. Make sure uvicorn is running on port 8000.\n\nDetails: ${e.message}`);
+    }
+
+    btn.disabled = false;
+    btn.classList.remove('loading');
+  }
+
+  // ── Render results ───────────────────────────────────────────────────────
+  function renderResults(predictions, raceName) {
+    const resultsEl = document.getElementById('results');
+    resultsEl.style.display = 'block';
+    document.getElementById('results-race-label').textContent = raceName;
+
+    const top3 = predictions.slice(0, 3);
+    const maxProb = predictions[0].PodiumProbability;
+
+    // Podium cards — P2 left, P1 center, P3 right
+    setCard('p1', top3[0]);
+    setCard('p2', top3[1]);
+    setCard('p3', top3[2]);
+
+    // Full ranking
+    const list = document.getElementById('ranking-list');
+    list.innerHTML = predictions.map((p, i) => {
+      const posClass = i < 3 ? `top3 p${i+1}` : '';
+      const barWidth = ((p.PodiumProbability / maxProb) * 100).toFixed(1);
+      return `
+        <div class="ranking-row ${posClass}">
+          <div class="rank-num">${p.PredictedRank}</div>
+          <div class="rank-driver">${p.Driver}</div>
+          <div class="rank-bar-wrap">
+            <div class="rank-bar" style="width:${barWidth}%"></div>
+          </div>
+          <div class="rank-pct">${(p.PodiumProbability * 100).toFixed(1)}%</div>
+        </div>`;
+    }).join('');
+
+    resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function setCard(pos, driver) {
+    document.getElementById(`pod-${pos}-driver`).textContent = driver.Driver;
+    document.getElementById(`pod-${pos}-prob`).textContent   = (driver.PodiumProbability * 100).toFixed(1) + '%';
+  }
+
+  function showError(el, msg) {
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────────────
+  buildUpcomingTable();
+</script>
+</body>
+</html>
