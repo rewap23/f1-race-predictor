@@ -2,7 +2,7 @@
 f1env/
 
 # FastF1 cache — huge, rebuilds automatically
-fastf1_cache/
+fastf1 cache/
 
 # Raw data files — too large for GitHub
 data/
