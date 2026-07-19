@@ -3,6 +3,7 @@
 A full-stack machine learning application that predicts Formula 1 race podium probabilities from pre-race qualifying data. Built end-to-end as a learning project covering data engineering, feature engineering, model selection, and production deployment.
 
 **Live demo:** https://rewap23.github.io/f1-race-predictor/ 
+
 **Stack:** Python · FastF1 · pandas · scikit-learn · XGBoost · FastAPI · HTML/CSS/JS
 
 ---
@@ -133,7 +134,7 @@ f1-race-predictor/
 
 ```bash
 # 1. Clone and set up environment
-git clone https://github.com/YOUR_USERNAME/f1-race-predictor.git
+git clone https://github.com/rewap23/f1-race-predictor.git
 cd f1-race-predictor
 python -m venv f1env
 source f1env/bin/activate      # Windows: f1env\Scripts\activate
