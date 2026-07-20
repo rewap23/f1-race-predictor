@@ -906,7 +906,7 @@
 
 <script>
   const API = 'https://f1-podium-predictor.onrender.com';
-  
+
 
   // ── Pre-loaded race data ─────────────────────────────────────────────────
   const PAST_RACES = {
@@ -935,6 +935,87 @@
         { Driver:'BOT', GridPosition:20, QualiGapToPole:1.560, DriverFormLast5:16.0, TeamFormLast5:15.5, TrackHistory:9.5,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:2   },
         { Driver:'ALO', GridPosition:21, QualiGapToPole:1.640, DriverFormLast5:16.5, TeamFormLast5:17.0, TrackHistory:6.8,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:0   },
         { Driver:'STR', GridPosition:22, QualiGapToPole:1.720, DriverFormLast5:17.2, TeamFormLast5:17.0, TrackHistory:11.5, PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:0   },
+      ]
+    },
+    spain: {
+      label: 'Round 7 — Spanish Grand Prix',
+      drivers: [
+        { Driver:'RUS', GridPosition:1,  QualiGapToPole:0.000, DriverFormLast5:8.2,  TeamFormLast5:4.6,  TrackHistory:5.5,  PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:88,  CumulativeTeamPoints:244 },
+        { Driver:'HAM', GridPosition:2,  QualiGapToPole:0.064, DriverFormLast5:3.8,  TeamFormLast5:5.8,  TrackHistory:2.5,  PointsFinishesLast5:5, HomeRace:0, CumulativeDriverPoints:90,  CumulativeTeamPoints:165 },
+        { Driver:'ANT', GridPosition:3,  QualiGapToPole:0.319, DriverFormLast5:1.0,  TeamFormLast5:4.6,  TrackHistory:10.0, PointsFinishesLast5:5, HomeRace:0, CumulativeDriverPoints:156, CumulativeTeamPoints:244 },
+        { Driver:'NOR', GridPosition:4,  QualiGapToPole:0.322, DriverFormLast5:12.8, TeamFormLast5:10.5, TrackHistory:4.5,  PointsFinishesLast5:2, HomeRace:0, CumulativeDriverPoints:58,  CumulativeTeamPoints:116 },
+        { Driver:'VER', GridPosition:5,  QualiGapToPole:0.342, DriverFormLast5:10.4, TeamFormLast5:10.1, TrackHistory:3.0,  PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:43,  CumulativeTeamPoints:69  },
+        { Driver:'HAD', GridPosition:6,  QualiGapToPole:0.398, DriverFormLast5:9.8,  TeamFormLast5:10.1, TrackHistory:9.0,  PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:26,  CumulativeTeamPoints:69  },
+        { Driver:'PIA', GridPosition:7,  QualiGapToPole:0.411, DriverFormLast5:8.2,  TeamFormLast5:10.5, TrackHistory:6.5,  PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:58,  CumulativeTeamPoints:116 },
+        { Driver:'LAW', GridPosition:8,  QualiGapToPole:1.863, DriverFormLast5:9.8,  TeamFormLast5:11.6, TrackHistory:9.0,  PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:24,  CumulativeTeamPoints:35  },
+        { Driver:'HUL', GridPosition:9,  QualiGapToPole:1.978, DriverFormLast5:13.2, TeamFormLast5:13.5, TrackHistory:8.5,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:2   },
+        { Driver:'LEC', GridPosition:10, QualiGapToPole:0.602, DriverFormLast5:7.8,  TeamFormLast5:5.8,  TrackHistory:4.0,  PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:75,  CumulativeTeamPoints:165 },
+        { Driver:'LIN', GridPosition:11, QualiGapToPole:1.161, DriverFormLast5:13.4, TeamFormLast5:11.6, TrackHistory:10.0, PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:11,  CumulativeTeamPoints:35  },
+        { Driver:'BOR', GridPosition:12, QualiGapToPole:1.322, DriverFormLast5:13.8, TeamFormLast5:13.5, TrackHistory:10.0, PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:2,   CumulativeTeamPoints:2   },
+        { Driver:'COL', GridPosition:13, QualiGapToPole:1.512, DriverFormLast5:10.6, TeamFormLast5:9.7,  TrackHistory:10.0, PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:15,  CumulativeTeamPoints:50  },
+        { Driver:'GAS', GridPosition:14, QualiGapToPole:1.582, DriverFormLast5:8.8,  TeamFormLast5:9.7,  TrackHistory:7.5,  PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:35,  CumulativeTeamPoints:50  },
+        { Driver:'BEA', GridPosition:15, QualiGapToPole:1.710, DriverFormLast5:13.2, TeamFormLast5:12.6, TrackHistory:10.0, PointsFinishesLast5:2, HomeRace:0, CumulativeDriverPoints:18,  CumulativeTeamPoints:21  },
+        { Driver:'SAI', GridPosition:16, QualiGapToPole:3.148, DriverFormLast5:11.6, TeamFormLast5:13.6, TrackHistory:5.0,  PointsFinishesLast5:3, HomeRace:1, CumulativeDriverPoints:6,   CumulativeTeamPoints:11  },
+        { Driver:'OCO', GridPosition:17, QualiGapToPole:2.394, DriverFormLast5:12.0, TeamFormLast5:12.6, TrackHistory:8.0,  PointsFinishesLast5:2, HomeRace:0, CumulativeDriverPoints:3,   CumulativeTeamPoints:21  },
+        { Driver:'ALB', GridPosition:18, QualiGapToPole:2.745, DriverFormLast5:15.6, TeamFormLast5:13.6, TrackHistory:8.0,  PointsFinishesLast5:2, HomeRace:0, CumulativeDriverPoints:5,   CumulativeTeamPoints:11  },
+        { Driver:'PER', GridPosition:19, QualiGapToPole:2.866, DriverFormLast5:16.0, TeamFormLast5:16.6, TrackHistory:7.5,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:0   },
+        { Driver:'BOT', GridPosition:20, QualiGapToPole:3.078, DriverFormLast5:17.2, TeamFormLast5:16.6, TrackHistory:5.5,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:0   },
+        { Driver:'STR', GridPosition:21, QualiGapToPole:4.079, DriverFormLast5:18.2, TeamFormLast5:17.2, TrackHistory:9.0,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:1   },
+        { Driver:'ALO', GridPosition:22, QualiGapToPole:4.136, DriverFormLast5:16.2, TeamFormLast5:17.2, TrackHistory:4.5,  PointsFinishesLast5:1, HomeRace:1, CumulativeDriverPoints:1,   CumulativeTeamPoints:1   },
+      ]
+    },
+    britain: {
+      label: 'Round 9 — British Grand Prix',
+      drivers: [
+        { Driver:'ANT', GridPosition:1,  QualiGapToPole:0.000, DriverFormLast5:4.4,  TeamFormLast5:6.0,  TrackHistory:10.0, PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:171, CumulativeTeamPoints:302 },
+        { Driver:'LEC', GridPosition:2,  QualiGapToPole:0.175, DriverFormLast5:11.0, TeamFormLast5:7.1,  TrackHistory:5.0,  PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:79,  CumulativeTeamPoints:204 },
+        { Driver:'HAM', GridPosition:3,  QualiGapToPole:0.347, DriverFormLast5:3.2,  TeamFormLast5:7.1,  TrackHistory:1.5,  PointsFinishesLast5:5, HomeRace:1, CumulativeDriverPoints:125, CumulativeTeamPoints:204 },
+        { Driver:'RUS', GridPosition:4,  QualiGapToPole:0.370, DriverFormLast5:7.6,  TeamFormLast5:6.0,  TrackHistory:3.0,  PointsFinishesLast5:3, HomeRace:1, CumulativeDriverPoints:131, CumulativeTeamPoints:302 },
+        { Driver:'HAD', GridPosition:5,  QualiGapToPole:0.635, DriverFormLast5:8.2,  TeamFormLast5:7.5,  TrackHistory:9.0,  PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:42,  CumulativeTeamPoints:115 },
+        { Driver:'NOR', GridPosition:6,  QualiGapToPole:0.766, DriverFormLast5:10.0, TeamFormLast5:7.8,  TrackHistory:3.5,  PointsFinishesLast5:3, HomeRace:1, CumulativeDriverPoints:79,  CumulativeTeamPoints:159 },
+        { Driver:'VER', GridPosition:7,  QualiGapToPole:0.782, DriverFormLast5:6.8,  TeamFormLast5:7.5,  TrackHistory:3.5,  PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:73,  CumulativeTeamPoints:115 },
+        { Driver:'PIA', GridPosition:8,  QualiGapToPole:0.921, DriverFormLast5:5.6,  TeamFormLast5:7.8,  TrackHistory:6.0,  PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:80,  CumulativeTeamPoints:159 },
+        { Driver:'LIN', GridPosition:9,  QualiGapToPole:1.194, DriverFormLast5:12.0, TeamFormLast5:11.0, TrackHistory:10.0, PointsFinishesLast5:3, HomeRace:1, CumulativeDriverPoints:14,  CumulativeTeamPoints:44  },
+        { Driver:'LAW', GridPosition:10, QualiGapToPole:1.605, DriverFormLast5:10.0, TeamFormLast5:11.0, TrackHistory:9.5,  PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:30,  CumulativeTeamPoints:44  },
+        { Driver:'BOR', GridPosition:11, QualiGapToPole:1.350, DriverFormLast5:11.6, TeamFormLast5:13.4, TrackHistory:10.0, PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:2,   CumulativeTeamPoints:2   },
+        { Driver:'GAS', GridPosition:12, QualiGapToPole:1.952, DriverFormLast5:10.2, TeamFormLast5:10.3, TrackHistory:8.0,  PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:41,  CumulativeTeamPoints:57  },
+        { Driver:'HUL', GridPosition:13, QualiGapToPole:1.428, DriverFormLast5:15.2, TeamFormLast5:13.4, TrackHistory:8.5,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:2   },
+        { Driver:'BEA', GridPosition:14, QualiGapToPole:2.390, DriverFormLast5:14.4, TeamFormLast5:13.7, TrackHistory:9.0,  PointsFinishesLast5:1, HomeRace:1, CumulativeDriverPoints:18,  CumulativeTeamPoints:21  },
+        { Driver:'SAI', GridPosition:15, QualiGapToPole:2.451, DriverFormLast5:13.2, TeamFormLast5:13.9, TrackHistory:6.0,  PointsFinishesLast5:2, HomeRace:0, CumulativeDriverPoints:6,   CumulativeTeamPoints:11  },
+        { Driver:'ALB', GridPosition:16, QualiGapToPole:2.527, DriverFormLast5:14.6, TeamFormLast5:13.9, TrackHistory:8.5,  PointsFinishesLast5:2, HomeRace:0, CumulativeDriverPoints:5,   CumulativeTeamPoints:11  },
+        { Driver:'OCO', GridPosition:17, QualiGapToPole:2.569, DriverFormLast5:13.0, TeamFormLast5:13.7, TrackHistory:8.5,  PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:3,   CumulativeTeamPoints:21  },
+        { Driver:'BOT', GridPosition:18, QualiGapToPole:3.116, DriverFormLast5:19.0, TeamFormLast5:17.7, TrackHistory:5.5,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:0   },
+        { Driver:'COL', GridPosition:19, QualiGapToPole:3.210, DriverFormLast5:10.4, TeamFormLast5:10.3, TrackHistory:10.0, PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:16,  CumulativeTeamPoints:57  },
+        { Driver:'PER', GridPosition:20, QualiGapToPole:3.340, DriverFormLast5:16.4, TeamFormLast5:17.7, TrackHistory:8.0,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:0   },
+        { Driver:'STR', GridPosition:21, QualiGapToPole:4.752, DriverFormLast5:18.6, TeamFormLast5:17.5, TrackHistory:9.5,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:1   },
+        { Driver:'ALO', GridPosition:22, QualiGapToPole:4.914, DriverFormLast5:16.4, TeamFormLast5:17.5, TrackHistory:4.0,  PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:1,   CumulativeTeamPoints:1   },
+      ]
+    },
+    belguim: {
+      label: 'Round 10 — Belgian Grand Prix',
+      drivers: [
+        { Driver:'ANT', GridPosition:1,  QualiGapToPole:0.000, DriverFormLast5:7.2,  TeamFormLast5:7.3,  TrackHistory:10.0, PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:179, CumulativeTeamPoints:333 },
+        { Driver:'VER', GridPosition:2,  QualiGapToPole:0.317, DriverFormLast5:9.8,  TeamFormLast5:7.5,  TrackHistory:2.5,  PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:76,  CumulativeTeamPoints:128 },
+        { Driver:'RUS', GridPosition:3,  QualiGapToPole:0.508, DriverFormLast5:7.4,  TeamFormLast5:7.3,  TrackHistory:5.0,  PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:154, CumulativeTeamPoints:333 },
+        { Driver:'LEC', GridPosition:4,  QualiGapToPole:0.532, DriverFormLast5:9.6,  TeamFormLast5:6.1,  TrackHistory:3.5,  PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:108, CumulativeTeamPoints:255 },
+        { Driver:'HAM', GridPosition:5,  QualiGapToPole:0.534, DriverFormLast5:2.6,  TeamFormLast5:6.1,  TrackHistory:2.8,  PointsFinishesLast5:5, HomeRace:0, CumulativeDriverPoints:147, CumulativeTeamPoints:255 },
+        { Driver:'PIA', GridPosition:6,  QualiGapToPole:0.655, DriverFormLast5:7.2,  TeamFormLast5:9.0,  TrackHistory:7.0,  PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:82,  CumulativeTeamPoints:179 },
+        { Driver:'LIN', GridPosition:7,  QualiGapToPole:0.782, DriverFormLast5:10.8, TeamFormLast5:9.1,  TrackHistory:10.0, PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:20,  CumulativeTeamPoints:59  },
+        { Driver:'BOR', GridPosition:8,  QualiGapToPole:1.267, DriverFormLast5:10.8, TeamFormLast5:13.1, TrackHistory:10.0, PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:6,   CumulativeTeamPoints:6   },
+        { Driver:'HAD', GridPosition:9,  QualiGapToPole:1.350, DriverFormLast5:5.2,  TeamFormLast5:7.5,  TrackHistory:9.0,  PointsFinishesLast5:5, HomeRace:0, CumulativeDriverPoints:52,  CumulativeTeamPoints:128 },
+        { Driver:'LAW', GridPosition:10, QualiGapToPole:0.978, DriverFormLast5:7.4,  TeamFormLast5:9.1,  TrackHistory:9.5,  PointsFinishesLast5:5, HomeRace:0, CumulativeDriverPoints:39,  CumulativeTeamPoints:59  },
+        { Driver:'GAS', GridPosition:11, QualiGapToPole:1.189, DriverFormLast5:8.2,  TeamFormLast5:9.5,  TrackHistory:7.5,  PointsFinishesLast5:4, HomeRace:0, CumulativeDriverPoints:42,  CumulativeTeamPoints:60  },
+        { Driver:'COL', GridPosition:12, QualiGapToPole:1.250, DriverFormLast5:10.8, TeamFormLast5:9.5,  TrackHistory:10.0, PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:18,  CumulativeTeamPoints:60  },
+        { Driver:'NOR', GridPosition:13, QualiGapToPole:0.440, DriverFormLast5:10.8, TeamFormLast5:9.0,  TrackHistory:4.5,  PointsFinishesLast5:3, HomeRace:0, CumulativeDriverPoints:97,  CumulativeTeamPoints:179 },
+        { Driver:'HUL', GridPosition:14, QualiGapToPole:1.529, DriverFormLast5:15.4, TeamFormLast5:13.1, TrackHistory:8.0,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:6   },
+        { Driver:'SAI', GridPosition:15, QualiGapToPole:1.635, DriverFormLast5:14.8, TeamFormLast5:15.9, TrackHistory:5.5,  PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:6,   CumulativeTeamPoints:11  },
+        { Driver:'BEA', GridPosition:16, QualiGapToPole:1.637, DriverFormLast5:14.6, TeamFormLast5:13.8, TrackHistory:10.0, PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:18,  CumulativeTeamPoints:21  },
+        { Driver:'ALB', GridPosition:17, QualiGapToPole:1.255, DriverFormLast5:17.0, TeamFormLast5:15.9, TrackHistory:8.5,  PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:5,   CumulativeTeamPoints:11  },
+        { Driver:'OCO', GridPosition:18, QualiGapToPole:1.936, DriverFormLast5:13.0, TeamFormLast5:13.8, TrackHistory:8.0,  PointsFinishesLast5:1, HomeRace:0, CumulativeDriverPoints:3,   CumulativeTeamPoints:21  },
+        { Driver:'BOT', GridPosition:19, QualiGapToPole:1.958, DriverFormLast5:18.4, TeamFormLast5:17.5, TrackHistory:5.5,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:0   },
+        { Driver:'PER', GridPosition:20, QualiGapToPole:2.106, DriverFormLast5:16.6, TeamFormLast5:17.5, TrackHistory:8.5,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:0   },
+        { Driver:'ALO', GridPosition:21, QualiGapToPole:4.137, DriverFormLast5:17.2, TeamFormLast5:18.0, TrackHistory:4.0,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:1,   CumulativeTeamPoints:1   },
+        { Driver:'STR', GridPosition:22, QualiGapToPole:4.312, DriverFormLast5:18.8, TeamFormLast5:18.0, TrackHistory:9.5,  PointsFinishesLast5:0, HomeRace:0, CumulativeDriverPoints:0,   CumulativeTeamPoints:1   },
       ]
     }
   };
