@@ -91,7 +91,7 @@ Validated the model against the 2026 Monaco GP using real qualifying data. The m
 
 **Why time-based splitting matters**: using a random train/test split on sequential race data would let the model "see" future races during training, producing optimistic test metrics that collapse in real deployment. Every split in this project respects chronological order.
 
-**Why leakage prevention is non-trivial**: rolling features computed naively include the current row's own value. Using `.shift(1)` before `.rolling()` ensures each race's feature only reflects information from strictly prior races — a mistake that's easy to miss and hard to detect without careful numerical verification.
+**Why leakage prevention is non-trivial**: rolling features computed naively include the current row's own value. Using `.shift(1)` before `.rolling()` ensures each race's feature only reflects information from strictly prior races (a mistake that's easy to miss and hard to detect without careful numerical verification).
 
 **Why more complex ≠ better**: XGBoost is generally considered the strongest algorithm for tabular data, but the random forest outperformed it here. With a dataset of ~2,900 rows, XGBoost's capacity to fit complex patterns became a liability rather than an asset. Model selection requires empirical comparison, not assumptions.
 
